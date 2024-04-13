@@ -41,7 +41,7 @@ def fileName():
 #Create the main window
 window = tk.Tk()
 #Create the title
-window.title("DataViz")
+window.title("Gourmet Guide")
 #set the dimensions
 window.geometry("1700x950")
 

@@ -15,8 +15,8 @@ client = OpenAI(api_key=OPEN_AI_API_KEY)
 # ------------------------------------------------
 def create_assistant():
     assistant = client.beta.assistants.create(
-        name="Cooking Assistant",
-        instructions="You are a personal chef assistant. Provide recipes and adjust them based on user preference using your own data.",
+        name="Gourmet Guide",
+        instructions="You are a personal cooking assistant. Provide recipes and adjust ingredients and portion sizes based on user preference using your own data. Make sure to calculate macronutrients for your recommendations.",
         tools=[{"type": "code_interpreter"}],
         model="gpt-3.5-turbo-0125",
     )
