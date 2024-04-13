@@ -2,6 +2,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import requests
+import shelve
 from urllib.error import HTTPError
 
 
@@ -24,14 +25,13 @@ def create_assistant():
 
 # create_assistant()
 
+# --------------------------------------------------------------
+# Using python's shelve library to create a local dictionary that stores each thread
+# --------------------------------------------------------------
+def check_if_thread_exists(user_id):
+    with shelve.open("threads_db") as threads_shelf:
+        return threads_shelf.get(user_id, None)
 
-# url = 'https://www.allrecipes.com/recipe/240935/spicy-chipotle-lentil-burgers/'
-# url = 'https://www.allrecipes.com/recipe/222582/baked-spaghetti/'
-# try:
-#    response = requests.get(url)
-#    response.raise_for_status()
-# except HTTPError as hp:
-#     print(hp)
-     
-# else:
-#     print("It works")
+def store_thread(user_id, thread_id):
+    with shelve.open("threads_db", writeback=True) as threads_shelf:
+        threads_shelf[user_id] = thread_id
