@@ -97,10 +97,11 @@ def run_assistant(thread):
 # Test assistant
 # --------------------------------------------------------------
 
-# new_message = generate_response("Can I have a recipe for a hamburger?", "123", "Justin")
+#new_message = generate_response("Can I have a recipe for a hamburger?", "123", "Justin")
 
-# new_message = generate_response("Can I have a recipe for french fries?", "456", "Donald")
+#new_message = generate_response("Can I have a recipe for french fries?", "456", "Donald")
 
-new_message = generate_response("What was my previous question?", "123", "Justin")
+#new_message = generate_response("What was my previous question?", "123", "Justin")
 
-new_message = generate_response("What was my previous question?", "456", "Donald")
+#new_message = generate_response("What was my previous question?", "456", "Donald")
+
