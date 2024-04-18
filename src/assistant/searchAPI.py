@@ -6,12 +6,13 @@ load_dotenv()
 google_search_api = os.getenv("GOOGLE_SEARCH_API")
 google_search_ID = os.getenv("GOOGLE_SEARCH_ID")
 
-search_query = 'pumpkin pie'
+#search = input()
+search = 'i want the recipe for a hamburger'
 
 url = 'https://www.googleapis.com/customsearch/v1'
 
 params = {
-    'q': search_query,
+    'q': search,
     'key': google_search_api,
     'cx': google_search_ID,
     'searchType': 'image'

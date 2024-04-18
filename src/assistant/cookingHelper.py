@@ -68,7 +68,6 @@ mainLabel = Label(window, textvariable=labelName, font=("Stencil",50))
 labelName.set("GourmetGuide")
 mainLabel.pack()
 
-
 #Logo
 Logo = Image.open('chef.png')
 Logo = ImageTk.PhotoImage(Logo)

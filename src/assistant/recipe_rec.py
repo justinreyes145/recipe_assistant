@@ -71,8 +71,9 @@ def generate_response(message_body, user_id, name):
 # Running the assistant, waiting for a response, and returning the response
 # --------------------------------------------------------------
 def run_assistant(thread):
-    # Retrieve the assistant using its unique id from the open ai website
-    assistant = client.beta.assistants.retrieve("asst_VWTHPMMIWvFH05bIyMnjOBFO")
+    # Retrieve the assistant using its unique id from the openai website
+    assistant = client.beta.assistants.retrieve("asst_jNDM35g2VESe9bgde9LPlREG")
+    
 
     # Run the assistant
     run = client.beta.threads.runs.create(
@@ -101,7 +102,10 @@ def run_assistant(thread):
 
 #new_message = generate_response("Can I have a recipe for french fries?", "456", "Donald")
 
+new_message = generate_response("Can I have a recipe for chocolate ice cream?", "789", "Sarkis")
+
 #new_message = generate_response("What was my previous question?", "123", "Justin")
 
 #new_message = generate_response("What was my previous question?", "456", "Donald")
 
+#new_message = generate_response("What was my previous question?", "789", "Sarkis")
