@@ -1,5 +1,6 @@
 from openai import OpenAI
 from dotenv import load_dotenv
+from searchAPI import search_web
 import os
 import time
 import shelve
@@ -10,9 +11,8 @@ load_dotenv()
 OPEN_AI_API_KEY = os.getenv("OPEN_AI_API_KEY")
 client = OpenAI(api_key=OPEN_AI_API_KEY)
 
-# --------------------------------------------------------------
+
 # Creating the GPT Assistant (ONLY RUN THIS ONCE!)
-# --------------------------------------------------------------
 def create_assistant():
     assistant = client.beta.assistants.create(
         name="Gourmet Guide",
@@ -24,22 +24,21 @@ def create_assistant():
 
 # create_assistant()
 
-# --------------------------------------------------------------
+
 # Using python's shelve library to create a local dictionary that stores each thread
-# --------------------------------------------------------------
 def check_if_thread_exists(user_id):
     # Opening the dictionary file on read mode and checking if user_id has corresponding thread_id
     with shelve.open("threads_db") as threads_shelf:
         return threads_shelf.get(user_id, None)
+
 
 def store_thread(user_id, thread_id):
     # Opening the dictionary file on write mode and writing a (key, value) pair of (user_id, thread_id)
     with shelve.open("threads_db", writeback=True) as threads_shelf:
         threads_shelf[user_id] = thread_id
 
-# --------------------------------------------------------------
+
 # Generating a message and running the assistant based on user_id
-# --------------------------------------------------------------
 def generate_response(message_body, user_id, name):
     # Check if there is already a thread_id for the user_id
     thread_id = check_if_thread_exists(user_id)
@@ -67,9 +66,8 @@ def generate_response(message_body, user_id, name):
     print(f"To {name}:", new_message)
     return new_message
 
-# --------------------------------------------------------------
+
 # Running the assistant, waiting for a response, and returning the response
-# --------------------------------------------------------------
 def run_assistant(thread):
     # Retrieve the assistant using its unique id from the openai website
     assistant = client.beta.assistants.retrieve("asst_jNDM35g2VESe9bgde9LPlREG")
