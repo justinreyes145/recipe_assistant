@@ -26,4 +26,4 @@ def search_web(query):
     return results
 
 # Testing
-print(search_web("I want a hamburger recipe"))
+# print(search_web("I want a hamburger recipe"))

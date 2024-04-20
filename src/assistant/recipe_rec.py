@@ -1,6 +1,5 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-from searchAPI import search_web
 import os
 import time
 import shelve
@@ -70,7 +69,7 @@ def generate_response(message_body, user_id, name):
 # Running the assistant, waiting for a response, and returning the response
 def run_assistant(thread):
     # Retrieve the assistant using its unique id from the openai website
-    assistant = client.beta.assistants.retrieve("asst_jNDM35g2VESe9bgde9LPlREG")
+    assistant = client.beta.assistants.retrieve("asst_VWTHPMMIWvFH05bIyMnjOBFO")
     
 
     # Run the assistant
