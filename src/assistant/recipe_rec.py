@@ -70,7 +70,6 @@ def generate_response(message_body, user_id, name):
 def run_assistant(thread):
     # Retrieve the assistant using its unique id from the openai website
     assistant = client.beta.assistants.retrieve("asst_VWTHPMMIWvFH05bIyMnjOBFO")
-    
 
     # Run the assistant
     run = client.beta.threads.runs.create(
@@ -87,7 +86,7 @@ def run_assistant(thread):
     # Retrieve the messages
     messages = client.beta.threads.messages.list(thread_id=thread.id)
     new_message = messages.data[0].content[0].text.value
-    print(f"Generated message: {new_message}")
+
     return new_message
 
 
@@ -95,14 +94,15 @@ def run_assistant(thread):
 # Test assistant
 # --------------------------------------------------------------
 
-#new_message = generate_response("Can I have a recipe for a hamburger?", "123", "Justin")
+if __name__ == "__main__":
+    new_message = generate_response("Can I have a recipe for a hamburger?", "123", "Justin")
 
-#new_message = generate_response("Can I have a recipe for french fries?", "456", "Donald")
+    new_message = generate_response("Can I have a recipe for french fries?", "456", "Donald")
 
-new_message = generate_response("Can I have a recipe for chocolate ice cream?", "789", "Sarkis")
+    new_message = generate_response("Can I have a recipe for chocolate ice cream?", "789", "Sarkis")
 
-#new_message = generate_response("What was my previous question?", "123", "Justin")
+    new_message = generate_response("What was my previous question?", "123", "Justin")
 
-#new_message = generate_response("What was my previous question?", "456", "Donald")
+    new_message = generate_response("What was my previous question?", "456", "Donald")
 
-#new_message = generate_response("What was my previous question?", "789", "Sarkis")
+    new_message = generate_response("What was my previous question?", "789", "Sarkis")

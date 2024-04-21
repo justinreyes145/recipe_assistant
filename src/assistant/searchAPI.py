@@ -26,4 +26,5 @@ def search_web(query):
     return results
 
 # Testing
-# print(search_web("I want a hamburger recipe"))
+if __name__ == "__main__":
+    print(search_web("I want a hamburger recipe"))
