@@ -48,13 +48,6 @@ def contactGPT():
         print("No query detected")
 #End of contactGPT 
 
-def open_user_select():
-   top = Toplevel(window)
-   top.geometry("750x250+585+415")
-   top.title("Profiles")
-   top.resizable(False, False)
-   top.focus_force()
-
 
 # Create the main window
 window = tk.Tk()
@@ -63,52 +56,33 @@ window = tk.Tk()
 window.title("GourmetGuide")
 
 # Set the dimensions of the main window
-window.geometry("1700x950+100+10")
+window.geometry("1250x750+100+10")
 
-# create the menu bar
-menubar = tk.Menu(window)
+conv_frame = ttk.Frame(window)
+conv_frame.place(x=0, y=0, relwidth=0.2, relheight=1)
+ttk.Label(conv_frame, background='gray').pack(expand=True,fill='both')
 
-# Here are all of the buttons in the
-filemenu = tk.Menu(menubar, tearoff=0)
-filemenu.add_command(label="New", command="none")
-filemenu.add_command(label="Open", command="none")
-filemenu.add_command(label="Save", command="none")
-filemenu.add_separator()
-filemenu.add_command(label="Exit", command=window.quit)
-menubar.add_cascade(label="File", menu="filemenu")
-window.config(menu=menubar)
-
-helpmenu = tk.Menu(menubar, tearoff=0)
-helpmenu.add_command(label="Help Index", command="none")
-helpmenu.add_command(label="About...", command="none")
-menubar.add_cascade(label="Help", menu="helpmenu")
-
-# Label for Project
-labelName = StringVar()
-mainLabel = Label(window, textvariable=labelName, font=("Stencil",50))
-labelName.set("GourmetGuide")
-mainLabel.pack()
+main_frame = ttk.Frame(window)
+main_frame.place(relx=0.2, y=0, relwidth=0.8, relheight=1)
 
 # Logo
 Logo = Image.open('chef.png')
-Logo = Logo.resize((200, 200))
+Logo = Logo.resize((100, 100))
 Logo = ImageTk.PhotoImage(Logo)
-logoLabel = tk.Label(window, image=Logo)
-logoLabel.place(x=30,y=20)
+logoLabel = tk.Label(main_frame, image=Logo)
+logoLabel.place(x=10,y=10)
 
-chatbox = tk.Text(window,height=13, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
+# Label for Project
+labelName = StringVar()
+mainLabel = Label(main_frame, textvariable=labelName, font=("Stencil",50))
+labelName.set("GourmetGuide")
+mainLabel.pack()
+
+
+chatbox = tk.Text(main_frame,height=13, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
 chatbox.tag_configure("bold", font=("Courier", 15, "bold"))
 chatbox.config(state=DISABLED)
-chatbox.place(x=35,y=250)
-
-askButton = tk.Button(
-    window,
-    text="Ask!",
-    command=contactGPT,
-    height=1,
-    width=5,
-    font=("Courier", 20, "normal")
-)
+chatbox.pack(anchor='center')
 
 # Method to retrieve previous conversations
 def prevConvo():
@@ -131,7 +105,7 @@ def prevConvo():
         i -= 1
 
 tempButton = tk.Button(
-    window,
+    main_frame,
     text="Temp",
     command=prevConvo,
     height=1,
@@ -142,13 +116,22 @@ tempButton = tk.Button(
 tempButton.place(x=100,y=200)
 
 # Set dimensions of input text field
-inputTextField = Text(window, width=90, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
+inputTextField = Text(main_frame, width=90, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
 
 # Placement of the text field
-inputTextField.place(x=40,y=800)
+inputTextField.pack(anchor='center', pady=20)
+
+askButton = tk.Button(
+    main_frame,
+    text="Ask!",
+    command=contactGPT,
+    height=1,
+    width=5,
+    font=("Courier", 20, "normal")
+)
 
 # Placemen of the ask button
-askButton.place(x=1570,y=800)
+askButton.pack(anchor='center')
 
 # This is the command that enables the window
 # Once this command is run, the window will show
