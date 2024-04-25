@@ -2,46 +2,37 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 import sys
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
 from PIL import Image, ImageTk
 
-def functionKill():
-    plotType.destroy()
+#Things to implement for the future
+#Implement Small login
+#implement dynamically changing textbox size (not that important)
+#Implement showing the text received from ChatGPT/Preloaded text file
+#Remove unused and clunky code
+#Add as many comments as possible
 
-def createPlots():
-    if selectPlot.get() == "line":
-        print("Line")
-    elif selectPlot.get() == "scatter":
-        print("Scatter")
-    elif selectPlot.get() == "histogram":
-        print("Histogram")
-    elif selectPlot.get() == "pie":
-        print("Pie Chart")
+def GPT_answer():
+    #GPT_response = 
+
+#This method is going to be the primary method in order to talk to our chatbot
+def contactGPT():
+    query = fileTextField.get(1.0, "end-1c")
+    #The grid will go Here
+    #I gotta put in a text field in order to add onto the chat more easily
+
+    if query:
+        fileTextField.delete(1.0,END)
+        chatbox.config(state=NORMAL)
+        chatbox.insert(END,"User: " + query + "\n")
+        GPT_answer()
+        chatbox.config(state=DISABLED)
     else:
-        print("No Graph Selected")
-
-def fileName():
-    global fileNameMenu
-    fileNameMenu = Toplevel(window)
-    fileNameMenu.geometry("500x75")
-    fileNameMenu.title("Input File Name")
-    global fileTextField
-    fileTextField = Text(fileNameMenu,width=60, height=1)
-    fileTextField.pack(pady=5)
-    fileButton = tk.Button(
-        fileNameMenu,
-        text="Upload File Name",
-        command=textGetter
-    )
-    fileButton.pack(side="bottom", pady=5)
-    global inputFileName
+        print("No query detected")
 
 #Create the main window
 window = tk.Tk()
 #Create the title
-window.title("Gourmet Guide")
+window.title("GourmetGuide")
 #set the dimensions
 window.geometry("1700x950")
 
@@ -72,20 +63,29 @@ mainLabel.pack()
 Logo = Image.open('chef.png')
 Logo = ImageTk.PhotoImage(Logo)
 logoLabel = tk.Label(window, image=Logo)
-logoLabel.pack(fill="none", expand=True)
+logoLabel.place(x=30,y=20)
 
-createButton = tk.Button(
+chatbox = tk.Text(window,height=33,width=225)
+chatbox.config(state=DISABLED)
+chatbox.place(x=55,y=300)
+
+askButton = tk.Button(
     window,
     text="Ask!",
-    command=createPlots,
+    command=contactGPT,
     height=2,
     width=5,
 )
 
+#Set dimensions
 fileTextField = Text(width=228, height=3)
+#placement of the text field
 fileTextField.place(x=10,y=881)
-createButton.place(x=1613,y=885)
-#plotPoints.pack(side="bottom", padx=20, pady=10)
-#uploadButton.pack(side="bottom", padx=20, pady=10)
+#set the value for the text as soon as the ask button is placed
 
+#set the button
+askButton.place(x=1613,y=885)
+
+#This is the command that enables the window
+#Once this command is run, the window will show
 window.mainloop()
