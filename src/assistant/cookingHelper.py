@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 import sys
+import time
 from PIL import Image, ImageTk
+from recipe_rec import generate_response
 
 #Things to implement for the future
 #Implement Small login
@@ -17,26 +19,26 @@ from PIL import Image, ImageTk
 #            history.write(input)
 
 def GPT_answer(query):
-    example_response = "DCDA"
+    time.sleep(2)
     chatbox.config(state=NORMAL)
-    chatbox.insert(END,"GourmetGuide: " + example_response + "\n")
+    
+    response = generate_response(query, '123', 'Justin')
+    chatbox.insert(END,"GourmetGuide: " + response + "\n")
     chatbox.config(state=DISABLED)
-    #GPT_response = generate_response(query,,)
-    #write_to_txt(GPT_response)
 
-#This method is going to be the primary method in order to talk to our chatbot
+# This method is going to be the primary method in order to talk to our chatbot
 def contactGPT():
     query = inputTextField.get(1.0, "end-1c")
-    #The grid will go Here
-    #I gotta put in a text field in order to add onto the chat more easily
+    # The grid will go Here
+    # I gotta put in a text field in order to add onto the chat more easily
 
     if query:
         inputTextField.delete(1.0,END)
         chatbox.config(state=NORMAL)
         chatbox.insert(END,"User: " + query + "\n")
-        #write_to_txt(query)
-        GPT_answer(query)
         chatbox.config(state=DISABLED)
+        chatbox.update()
+        GPT_answer(query)
     else:
         print("No query detected")
 #End of contactGPT 
@@ -92,7 +94,7 @@ Logo = ImageTk.PhotoImage(Logo)
 logoLabel = tk.Label(window, image=Logo)
 logoLabel.place(x=30,y=20)
 
-chatbox = tk.Text(window,height=13, width=107, font=("Segoe UI", 20, "normal"), padx=10, pady=10)
+chatbox = tk.Text(window,height=13, width=100, font=("Courier", 20, "normal"), padx=10, pady=10)
 chatbox.config(state=DISABLED)
 chatbox.place(x=35,y=250)
 
@@ -102,11 +104,11 @@ askButton = tk.Button(
     command=contactGPT,
     height=1,
     width=5,
-    font=("Segoe UI", 20, "normal")
+    font=("Courier", 20, "normal")
 )
 
 # Set dimensions
-inputTextField = Text(window, width=100, height=2, font=("Segoe UI", 20, "normal"), padx=10, pady=10)
+inputTextField = Text(window, width=90, height=2, font=("Courier", 20, "bold"), padx=10, pady=10)
 
 # placement of the text field
 inputTextField.place(x=40,y=800)
