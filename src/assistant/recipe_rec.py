@@ -49,34 +49,34 @@ def create_assistant():
     return assistant
 
 
-# Using python's shelve library to check a local dictionary for existing user-thread information
-def check_if_thread_exists(user_id):
-    # Opening the dictionary file on read mode and checking if user_id has corresponding thread_id
+# Using python's shelve library to check a local dictionary for existing conv-thread information
+def check_if_thread_exists(conv_id):
+    # Opening the dictionary file on read mode and checking if conv_id has corresponding thread_id
     with shelve.open("threads_db") as threads_shelf:
-        return threads_shelf.get(user_id, None)
+        return threads_shelf.get(conv_id, None)
 
 
 # Using python's shelve library to create a local dictionary that stores each thread
-def store_thread(user_id, thread_id):
-    # Opening the dictionary file on write mode and writing a (key, value) pair of (user_id, thread_id)
+def store_thread(conv_id, thread_id):
+    # Opening the dictionary file on write mode and writing a (key, value) pair of (conv_id, thread_id)
     with shelve.open("threads_db", writeback=True) as threads_shelf:
-        threads_shelf[user_id] = thread_id
+        threads_shelf[conv_id] = thread_id
 
 
-# Generating a message and running the assistant based on user_id
-def generate_response(message_body, user_id, name):
-    # Check if there is already a thread_id for the user_id
-    thread_id = check_if_thread_exists(user_id)
+# Generating a message and running the assistant based on conv_id
+def generate_response(message_body, conv_id):
+    # Check if there is already a thread_id for the conv_id
+    thread_id = check_if_thread_exists(conv_id)
 
-    # If a thread does not exist for the user, create a new one and store it in the dictionary
+    # If a thread does not exist for the conversation, create a new one and store it in the dictionary
     if thread_id is None:
-        print(f"Creating new thread for {name} with user_id {user_id}")
+        print(f"Creating new thread for conv_id {conv_id}")
         thread = client.beta.threads.create()
-        store_thread(user_id, thread.id)
+        store_thread(conv_id, thread.id)
         thread_id = thread.id
     # Else, a thread exists so retrieve it from the dictionary
     else:
-        print(f"Retrieving existing thread for {name} with user_id {user_id}")
+        print(f"Retrieving existing thread for conv_id {conv_id}")
         thread = client.beta.threads.retrieve(thread_id)
 
     # Adding a message to the thread
@@ -88,7 +88,6 @@ def generate_response(message_body, user_id, name):
 
     # Run the assistant and get a response
     new_message = run_assistant(thread)
-    print(f"To {name}:", new_message)
     return new_message
 
 
@@ -141,6 +140,14 @@ def run_assistant(thread):
     return new_message
 
 
+# Method to retrieve old message thread
+def retrieve_thread(conv_id):
+    thread_id = check_if_thread_exists(conv_id)
+    thread = client.beta.threads.retrieve(thread_id)
+    messages = client.beta.threads.messages.list(thread_id=thread.id)
+    return messages
+
+
 # Method to cancel a run in case of errors
 def cancel_run(thread, run):
     run = client.beta.threads.runs.cancel(
@@ -151,14 +158,4 @@ def cancel_run(thread, run):
 
 # Test assistant
 if __name__ == "__main__":
-    new_message = generate_response("Can I have a recipe for a hamburger?", "123", "Justin")
-
-    new_message = generate_response("Can I have a recipe for french fries?", "456", "Donald")
-
-    new_message = generate_response("Can I have a recipe for chocolate ice cream?", "789", "Sarkis")
-
-    new_message = generate_response("What was my previous question?", "123", "Justin")
-
-    new_message = generate_response("What was my previous question?", "456", "Donald")
-
-    new_message = generate_response("What was my previous question?", "789", "Sarkis")
+    retrieve_thread('1')

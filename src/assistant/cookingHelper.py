@@ -5,6 +5,7 @@ import sys
 import time
 from PIL import Image, ImageTk
 from recipe_rec import generate_response
+from recipe_rec import retrieve_thread
 
 #Things to implement for the future
 #Implement Small login
@@ -18,13 +19,16 @@ from recipe_rec import generate_response
 #        for line in history:
 #            history.write(input)
 
+current_conv_id = '2'
+
+# Method to get answer from assistant and display the answer on the chat box
 def GPT_answer(query):
-    time.sleep(2)
     chatbox.config(state=NORMAL)
-    
-    response = generate_response(query, '123', 'Justin')
-    chatbox.insert(END,"GourmetGuide: " + response + "\n")
+    response = generate_response(query, current_conv_id)
+    chatbox.insert(END,"GourmetGuide: ", "bold")
+    chatbox.insert(END,response + "\n\n", "normal")
     chatbox.config(state=DISABLED)
+    chatbox.update()
 
 # This method is going to be the primary method in order to talk to our chatbot
 def contactGPT():
@@ -35,7 +39,8 @@ def contactGPT():
     if query:
         inputTextField.delete(1.0,END)
         chatbox.config(state=NORMAL)
-        chatbox.insert(END,"User: " + query + "\n")
+        chatbox.insert(END,"User: ", "bold")
+        chatbox.insert(END,query + "\n\n", "normal")
         chatbox.config(state=DISABLED)
         chatbox.update()
         GPT_answer(query)
@@ -50,22 +55,19 @@ def open_user_select():
    top.resizable(False, False)
    top.focus_force()
 
-#Creating the login window
-#login_window = tk.Tk()
-#make the title
-#login_window.title("GourmetGuide")
-#set window dimensions
-#login_window.geometry("1500x500")
 
 # Create the main window
 window = tk.Tk()
+
 # Create the title
 window.title("GourmetGuide")
-# set the dimensions
+
+# Set the dimensions of the main window
 window.geometry("1700x950+100+10")
 
 # create the menu bar
 menubar = tk.Menu(window)
+
 # Here are all of the buttons in the
 filemenu = tk.Menu(menubar, tearoff=0)
 filemenu.add_command(label="New", command="none")
@@ -94,7 +96,8 @@ Logo = ImageTk.PhotoImage(Logo)
 logoLabel = tk.Label(window, image=Logo)
 logoLabel.place(x=30,y=20)
 
-chatbox = tk.Text(window,height=13, width=100, font=("Courier", 20, "normal"), padx=10, pady=10)
+chatbox = tk.Text(window,height=13, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
+chatbox.tag_configure("bold", font=("Courier", 15, "bold"))
 chatbox.config(state=DISABLED)
 chatbox.place(x=35,y=250)
 
@@ -107,13 +110,44 @@ askButton = tk.Button(
     font=("Courier", 20, "normal")
 )
 
-# Set dimensions
-inputTextField = Text(window, width=90, height=2, font=("Courier", 20, "bold"), padx=10, pady=10)
+# Method to retrieve previous conversations
+def prevConvo():
+    chatbox.delete(1.0, END)
 
-# placement of the text field
+    old_messages = retrieve_thread('1')
+    i = old_messages.data.__len__() - 1
+    while i >= 0:
+        message = old_messages.data[i].content[0].text.value
+        role = old_messages.data[i].role
+
+        chatbox.config(state=NORMAL)
+        if role == 'user': 
+            chatbox.insert(END,"User: ", "bold")
+            chatbox.insert(END,message + "\n\n", "normal")
+        else:
+            chatbox.insert(END,"GourmetGuide: ", "bold")
+            chatbox.insert(END,message + "\n\n", "normal")
+        chatbox.config(state=DISABLED)
+        i -= 1
+
+tempButton = tk.Button(
+    window,
+    text="Temp",
+    command=prevConvo,
+    height=1,
+    width=5,
+    font=("Courier", 15, "normal")
+)
+
+tempButton.place(x=100,y=200)
+
+# Set dimensions of input text field
+inputTextField = Text(window, width=90, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
+
+# Placement of the text field
 inputTextField.place(x=40,y=800)
 
-# set the button
+# Placemen of the ask button
 askButton.place(x=1570,y=800)
 
 # This is the command that enables the window
