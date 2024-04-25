@@ -11,8 +11,18 @@ from PIL import Image, ImageTk
 #Remove unused and clunky code
 #Add as many comments as possible
 
-def GPT_answer():
-    #GPT_response = 
+#def write_to_txt(input):
+#    with open(,'r',newline='') as history:
+#        for line in history:
+#            history.write(input)
+
+def GPT_answer(query):
+    example_response = "DCDA"
+    chatbox.config(state=NORMAL)
+    chatbox.insert(END,"GourmetGuide: " + example_response + "\n")
+    chatbox.config(state=DISABLED)
+    #GPT_response = generate_response(query,,)
+    #write_to_txt(GPT_response)
 
 #This method is going to be the primary method in order to talk to our chatbot
 def contactGPT():
@@ -24,10 +34,19 @@ def contactGPT():
         fileTextField.delete(1.0,END)
         chatbox.config(state=NORMAL)
         chatbox.insert(END,"User: " + query + "\n")
-        GPT_answer()
+        #write_to_txt(query)
+        GPT_answer(query)
         chatbox.config(state=DISABLED)
     else:
         print("No query detected")
+#End of contactGPT 
+
+#Creating the login window
+#login_window = tk.Tk()
+#make the title
+#login_window.title("GourmetGuide")
+#set window dimensions
+#login_window.geometry("1500x500")
 
 #Create the main window
 window = tk.Tk()
