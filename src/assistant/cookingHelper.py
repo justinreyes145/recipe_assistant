@@ -60,29 +60,31 @@ window.geometry("1250x750+100+10")
 
 conv_frame = ttk.Frame(window)
 conv_frame.place(x=0, y=0, relwidth=0.2, relheight=1)
-ttk.Label(conv_frame, background='gray').pack(expand=True,fill='both')
+conv_frame.columnconfigure((0), weight=1)
 
 main_frame = ttk.Frame(window)
 main_frame.place(relx=0.2, y=0, relwidth=0.8, relheight=1)
-
-# Logo
-Logo = Image.open('chef.png')
-Logo = Logo.resize((100, 100))
-Logo = ImageTk.PhotoImage(Logo)
-logoLabel = tk.Label(main_frame, image=Logo)
-logoLabel.place(x=10,y=10)
+main_frame.columnconfigure((0,1,2), weight=1, uniform='a')
 
 # Label for Project
 labelName = StringVar()
 mainLabel = Label(main_frame, textvariable=labelName, font=("Stencil",50))
 labelName.set("GourmetGuide")
-mainLabel.pack()
+mainLabel.grid(row=0,column=0, sticky='nswe', columnspan=2)
+
+
+# Logo
+Logo = Image.open('chef.png')
+Logo = Logo.resize((50, 50))
+Logo = ImageTk.PhotoImage(Logo)
+logoLabel = tk.Label(main_frame, image=Logo)
+logoLabel.grid(row=0, column=2, sticky='nswe', columnspan=1)
 
 
 chatbox = tk.Text(main_frame,height=13, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
 chatbox.tag_configure("bold", font=("Courier", 15, "bold"))
 chatbox.config(state=DISABLED)
-chatbox.pack(anchor='center')
+chatbox.grid(row=1,column=0, sticky='nswe', columnspan=3, padx=5)
 
 # Method to retrieve previous conversations
 def prevConvo():
@@ -104,8 +106,20 @@ def prevConvo():
         chatbox.config(state=DISABLED)
         i -= 1
 
+newConvoButton = tk.Button(
+    conv_frame,
+    text="New Conversation",
+    height=1,
+    width=5,
+    font=("Courier", 15, "normal"),
+    background='gray10',
+    foreground='white'
+)
+
+newConvoButton.grid(row=0,column=0,sticky='nswe',columnspan=1, padx=10, pady=10)
+
 tempButton = tk.Button(
-    main_frame,
+    conv_frame,
     text="Temp",
     command=prevConvo,
     height=1,
@@ -113,13 +127,13 @@ tempButton = tk.Button(
     font=("Courier", 15, "normal")
 )
 
-tempButton.place(x=100,y=200)
+tempButton.grid(row=1,column=0,sticky='nswe',columnspan=1, padx=10, pady=10)
 
 # Set dimensions of input text field
-inputTextField = Text(main_frame, width=90, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
+inputTextField = Text(main_frame, width=80, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
 
 # Placement of the text field
-inputTextField.pack(anchor='center', pady=20)
+inputTextField.grid(row=2,column=0, sticky='nswe', columnspan=2, pady=10, padx=5)
 
 askButton = tk.Button(
     main_frame,
@@ -131,7 +145,7 @@ askButton = tk.Button(
 )
 
 # Placemen of the ask button
-askButton.pack(anchor='center')
+askButton.grid(row=2,column=2, sticky='nswe', columnspan=1, pady=10, padx=5)
 
 # This is the command that enables the window
 # Once this command is run, the window will show
