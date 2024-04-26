@@ -63,13 +63,6 @@ def store_thread(conv_id, thread_id):
         threads_shelf[conv_id] = thread_id
 
 
-# Getting the existing conv_ids from the thread shelve
-def check_conv_ids():
-    # Opening the dictionary file on read mode and getting the conv_id list
-    with shelve.open("threads_db", writeback=True) as threads_shelf:
-        return list(threads_shelf.keys())
-
-
 # Generating a message and running the assistant based on conv_id
 def generate_response(message_body, conv_id):
     # Check if there is already a thread_id for the conv_id
@@ -165,6 +158,7 @@ def cancel_run(thread, run):
         )
 
 
-# Test assistant
+# Create assistant (AGAIN ONLY RUN THIS ONCE)
 if __name__ == "__main__":
-    retrieve_thread('1')
+    # create_assistant()
+    cancel_run('thread_wPueSwJ0zSFfucbXe1cWceBC', 'run_2VGsW6CJJOve9a2MSZVq375O')

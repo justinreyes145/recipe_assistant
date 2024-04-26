@@ -20,7 +20,6 @@ def search_web(tool_call):
         'q': query,
         'key': google_search_api,
         'cx': google_search_ID
-        # 'searchType': 'image'
     }
 
     # Getting the response from search API and returning the result
@@ -30,7 +29,31 @@ def search_web(tool_call):
         "tool_call_id": tool_call.id,
         "output": results
         }
+# End of search_web()
+
+
+# Function to search the web using a query
+def search_image(query):
+    # Loading the google api as the url for requests method
+    url = 'https://www.googleapis.com/customsearch/v1'
+
+    # Setting parameters for searching
+    params = {
+        'q': query,
+        'key': google_search_api,
+        'cx': google_search_ID,
+        'searchType': 'image'
+    }
+
+    # Getting the response from search API and returning the result
+    response = requests.get(url, params=params)
+    results = response.json()['items'][0]['link']
+    return {
+        "output": results
+        }
+# End of search_image()
+
 
 # Testing
 if __name__ == "__main__":
-    print(search_web("ramen noodles recipe"))
+    print(search_image("https://feelgoodfoodie.net/recipe/ground-beef-tacos-napa-cabbage-guacamole/"))

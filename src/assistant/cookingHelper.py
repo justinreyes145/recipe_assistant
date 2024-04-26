@@ -1,24 +1,16 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-import sys
-import time
 from PIL import Image, ImageTk
+from tkinter.scrolledtext import ScrolledText
 from conversations import retrieve_conversations
 from conversations import save_conversation
 from recipe_rec import generate_response
 from recipe_rec import retrieve_thread
-from recipe_rec import check_conv_ids
 from functools import partial
 
-# Things to implement for the future
-# Implement Small login
-# Implement dynamically changing textbox size (not that important)
-# Implement showing the text received from ChatGPT/Preloaded text file
-# Remove unused and clunky code
-# Add as many comments as possible
 
-print(retrieve_conversations().__len__())
+# Setting global variable for current conversation id and retrieving all existing conversations
 current_conv_id = '0'
 conv_list = retrieve_conversations()
 print(conv_list)
@@ -26,29 +18,40 @@ print(conv_list)
 # Method to get answer from assistant and display the answer on the chat box
 def GPT_answer(query):
     chatbox.config(state=NORMAL)
+
+    # Get the response from assistant
     response = generate_response(query, current_conv_id)
-    chatbox.insert(END,"GourmetGuide: ", "bold")
+
+    # Insert response into chat box
+    chatbox.insert(END,"GourmetGuide: ", "red")
     chatbox.insert(END,response + "\n\n", "normal")
     chatbox.config(state=DISABLED)
     chatbox.update()
+# End of GPT_answer()
+
 
 # This method is going to be the primary method in order to talk to our chatbot
 def contactGPT():
+    # Retrieve the text from the input field
     query = inputTextField.get(1.0, "end-1c")
-    # The grid will go Here
-    # I gotta put in a text field in order to add onto the chat more easily
 
+    # If query exists, send it to the assistant, else do nothing
     if query:
+        # Delete current input text
         inputTextField.delete(1.0,END)
+
+        # Insert query to chat box
         chatbox.config(state=NORMAL)
-        chatbox.insert(END,"User: ", "bold")
+        chatbox.insert(END,"User: ", "green")
         chatbox.insert(END,query + "\n\n", "normal")
         chatbox.config(state=DISABLED)
         chatbox.update()
+
+        # Get assistant response
         GPT_answer(query)
     else:
         print("No query detected")
-#End of contactGPT 
+# End of contactGPT()
 
 
 # Create the main window
@@ -60,10 +63,12 @@ window.title("GourmetGuide")
 # Set the dimensions of the main window
 window.geometry("1250x750+100+10")
 
+# Create a frame to input the conversation buttons into
 conv_frame = ttk.Frame(window)
 conv_frame.place(x=0, y=0, relwidth=0.2, relheight=1)
 conv_frame.columnconfigure((0), weight=1)
 
+# Create a frame for the main chat box
 main_frame = ttk.Frame(window)
 main_frame.place(relx=0.2, y=0, relwidth=0.8, relheight=1)
 main_frame.columnconfigure((0,1,2), weight=1, uniform='a')
@@ -74,7 +79,6 @@ mainLabel = Label(main_frame, textvariable=labelName, font=("Stencil",50))
 labelName.set("GourmetGuide")
 mainLabel.grid(row=0,column=0, sticky='nswe', columnspan=2)
 
-
 # Logo
 Logo = Image.open('chef.png')
 Logo = Logo.resize((50, 50))
@@ -82,11 +86,17 @@ Logo = ImageTk.PhotoImage(Logo)
 logoLabel = tk.Label(main_frame, image=Logo)
 logoLabel.grid(row=0, column=2, sticky='nswe', columnspan=1)
 
+# Creating the chat box with scroll bar
+chatbox = ScrolledText(main_frame,height=20, width=100, font=("Courier", 15, "normal"), padx=10, pady=10, wrap=WORD)
+chatbox.tag_configure("green", font=("Courier", 15, "bold"), foreground="green")
+chatbox.tag_configure("red", font=("Courier", 15, "bold"), foreground="red")
 
-chatbox = tk.Text(main_frame,height=20, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
-chatbox.tag_configure("bold", font=("Courier", 15, "bold"))
+# Disabling the chat box to start with
 chatbox.config(state=DISABLED)
+
+# Chatbox placement
 chatbox.grid(row=1,column=0, sticky='nswe', columnspan=3, padx=5)
+
 
 # Method to retrieve previous conversations
 def prevConvo(conv_id):
@@ -117,18 +127,20 @@ def prevConvo(conv_id):
             # Insert message into chat box based on role
             chatbox.config(state=NORMAL)
             if role == 'user': 
-                chatbox.insert(END,"User: ", "bold")
+                chatbox.insert(END,"User: ", "green")
                 chatbox.insert(END,message + "\n\n", "normal")
             else:
-                chatbox.insert(END,"GourmetGuide: ", "bold")
+                chatbox.insert(END,"GourmetGuide: ", "red")
                 chatbox.insert(END,message + "\n\n", "normal")
             chatbox.config(state=DISABLED)
             i -= 1
     
     # Allow user to input queries
     inputTextField.config(state=NORMAL)
+# End of prevConvo()
 
-# Method to make new conversation
+
+# Method to delete old text from chat box and initialize new conversation
 def newConvo():
     # Delete the current displayed text on the chat box
     chatbox.config(state=NORMAL)
@@ -145,8 +157,10 @@ def newConvo():
     current_conv_id = f'{retrieve_conversations().__len__()}'
     print(current_conv_id)
     createConvo()
+# End of newConvo()
 
-# Method to create new conversations
+
+# Method to create new conversation
 def createConvo():
     # Creating pop up window for saving
     save_window = Toplevel(window)
@@ -173,11 +187,15 @@ def createConvo():
         foreground='white'
     )
     save_button.pack(pady=10)
+# End of createConvo()
+
 
 # Method to save new convo in list
 def saveConvo(conv_field, save_window):
     # Getting the title of the conversation and saving it in the convos_db file
     title = conv_field.get(1.0, "end-1c")
+
+    # If there is text in the field, create the new conversation
     if title:
         save_conversation(current_conv_id, title)
         save_window.destroy()
@@ -190,6 +208,8 @@ def saveConvo(conv_field, save_window):
         
         # Allow user to input queries
         inputTextField.config(state=NORMAL)
+# End of saveConvo()
+
 
 # Creating new conversation button
 newConvoButton = tk.Button(
@@ -207,7 +227,7 @@ newConvoButton = tk.Button(
 newConvoButton.grid(row=0,column=0,sticky='nswe',columnspan=1, padx=5, pady=5)
 
 # Set dimensions of input text field
-inputTextField = Text(main_frame, width=80, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
+inputTextField = Text(main_frame, width=80, height=2, font=("Courier", 15, "bold"), padx=10, pady=10, wrap=WORD)
 
 # Placement of the text field
 inputTextField.grid(row=2,column=0, sticky='nswe', columnspan=2, pady=10, padx=5)
@@ -230,16 +250,22 @@ askButton.grid(row=2,column=2, sticky='nswe', columnspan=1, pady=10, padx=5)
 
 # Method to update the list of conversations
 def updateConvos():
+    # Iterating over all the saved conv_id and conv_titles
     id = 0
     for val in conv_list:
+        # Creating a new button for each conv
         newButton = tk.Button(
             conv_frame,
             text=val,
             command=partial(prevConvo, id),
-            font=("Courier", 10, "normal")
+            font=("Courier", 15, "normal")
         )
+        # Setting the new button placement
         newButton.grid(row=id+1,column=0,sticky='nswe',columnspan=1, padx=10, pady=5)
         id += 1
-    
+# End of updateConvos()
+
+
+# Update the list of conversations and pop up the main window
 updateConvos()
 window.mainloop()
