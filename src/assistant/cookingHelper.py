@@ -1,3 +1,7 @@
+# Group 1: Donald Cruz, Justin Reyes, Sarkis Shil-Gevorkyan
+# GourmetGuide: your one AI cooking assistant
+# Last updated 4/25/2024
+
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
