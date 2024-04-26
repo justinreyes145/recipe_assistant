@@ -63,6 +63,13 @@ def store_thread(conv_id, thread_id):
         threads_shelf[conv_id] = thread_id
 
 
+# Getting the existing conv_ids from the thread shelve
+def check_conv_ids():
+    # Opening the dictionary file on read mode and getting the conv_id list
+    with shelve.open("threads_db", writeback=True) as threads_shelf:
+        return list(threads_shelf.keys())
+
+
 # Generating a message and running the assistant based on conv_id
 def generate_response(message_body, conv_id):
     # Check if there is already a thread_id for the conv_id
@@ -143,9 +150,11 @@ def run_assistant(thread):
 # Method to retrieve old message thread
 def retrieve_thread(conv_id):
     thread_id = check_if_thread_exists(conv_id)
-    thread = client.beta.threads.retrieve(thread_id)
-    messages = client.beta.threads.messages.list(thread_id=thread.id)
-    return messages
+    if thread_id: 
+        thread = client.beta.threads.retrieve(thread_id)
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+        return messages
+    else: return None
 
 
 # Method to cancel a run in case of errors

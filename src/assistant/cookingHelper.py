@@ -4,22 +4,24 @@ from tkinter import ttk
 import sys
 import time
 from PIL import Image, ImageTk
+from conversations import retrieve_conversations
+from conversations import save_conversation
 from recipe_rec import generate_response
 from recipe_rec import retrieve_thread
+from recipe_rec import check_conv_ids
+from functools import partial
 
-#Things to implement for the future
-#Implement Small login
-#implement dynamically changing textbox size (not that important)
-#Implement showing the text received from ChatGPT/Preloaded text file
-#Remove unused and clunky code
-#Add as many comments as possible
+# Things to implement for the future
+# Implement Small login
+# Implement dynamically changing textbox size (not that important)
+# Implement showing the text received from ChatGPT/Preloaded text file
+# Remove unused and clunky code
+# Add as many comments as possible
 
-#def write_to_txt(input):
-#    with open(,'r',newline='') as history:
-#        for line in history:
-#            history.write(input)
-
-current_conv_id = '2'
+print(retrieve_conversations().__len__())
+current_conv_id = '0'
+conv_list = retrieve_conversations()
+print(conv_list)
 
 # Method to get answer from assistant and display the answer on the chat box
 def GPT_answer(query):
@@ -81,34 +83,109 @@ logoLabel = tk.Label(main_frame, image=Logo)
 logoLabel.grid(row=0, column=2, sticky='nswe', columnspan=1)
 
 
-chatbox = tk.Text(main_frame,height=13, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
+chatbox = tk.Text(main_frame,height=20, width=100, font=("Courier", 15, "normal"), padx=10, pady=10)
 chatbox.tag_configure("bold", font=("Courier", 15, "bold"))
 chatbox.config(state=DISABLED)
 chatbox.grid(row=1,column=0, sticky='nswe', columnspan=3, padx=5)
 
 # Method to retrieve previous conversations
-def prevConvo():
+def prevConvo(conv_id):
+    conv_id = str(conv_id)
+    print(f'conv_id:{conv_id}')
+
+    # Set current_conv_id to id of prev conv
+    global current_conv_id
+    current_conv_id = conv_id
+
+    # Delete the current displayed text on the chat box
+    chatbox.config(state=NORMAL)
     chatbox.delete(1.0, END)
+    chatbox.config(state=DISABLED)
+    chatbox.update()
 
-    old_messages = retrieve_thread('1')
-    i = old_messages.data.__len__() - 1
-    while i >= 0:
-        message = old_messages.data[i].content[0].text.value
-        role = old_messages.data[i].role
+    # Retrieve the conversation based on thread
+    old_messages = retrieve_thread(conv_id)
 
-        chatbox.config(state=NORMAL)
-        if role == 'user': 
-            chatbox.insert(END,"User: ", "bold")
-            chatbox.insert(END,message + "\n\n", "normal")
-        else:
-            chatbox.insert(END,"GourmetGuide: ", "bold")
-            chatbox.insert(END,message + "\n\n", "normal")
-        chatbox.config(state=DISABLED)
-        i -= 1
+    # Print the conversations on the thread if one exists
+    if old_messages:
+        i = old_messages.data.__len__() - 1
+        while i >= 0:
+            # Get the message and role
+            message = old_messages.data[i].content[0].text.value
+            role = old_messages.data[i].role
 
+            # Insert message into chat box based on role
+            chatbox.config(state=NORMAL)
+            if role == 'user': 
+                chatbox.insert(END,"User: ", "bold")
+                chatbox.insert(END,message + "\n\n", "normal")
+            else:
+                chatbox.insert(END,"GourmetGuide: ", "bold")
+                chatbox.insert(END,message + "\n\n", "normal")
+            chatbox.config(state=DISABLED)
+            i -= 1
+
+# Method to make new conversation
+def newConvo():
+    # Delete the current displayed text on the chat box
+    chatbox.config(state=NORMAL)
+    chatbox.delete(1.0, END)
+    chatbox.config(state=DISABLED)
+    chatbox.update()
+
+    # Delete the current displayed text on the input text box
+    inputTextField.delete(1.0, END)
+
+    # Getting a new conversation id
+    global current_conv_id
+    current_conv_id = f'{retrieve_conversations().__len__()}'
+    print(current_conv_id)
+    createConvo()
+
+# Method to create new conversations
+def createConvo():
+    # Creating pop up window for saving
+    save_window = Toplevel(window)
+    save_window.geometry("300x200")
+    save_window.title("New Conversation")
+
+    # Creating label for save window
+    save_label = StringVar()
+    save_title = Label(save_window,textvariable=save_label,font=("Courier", 20, "normal"))
+    save_label.set("Conversation Name")
+    save_title.pack(pady=10)
+
+    # Creating input field for save window
+    ConvoTitleField = Text(save_window,width=60,height=1,font=("Courier", 20, "normal"), padx=10, pady=10)
+    ConvoTitleField.pack(pady=10)
+
+    # Creating button for save window
+    save_button = tk.Button(
+        save_window,
+        text="Save",
+        font=("Courier", 20, "normal"),
+        background='gray20',
+        command=partial(saveConvo, ConvoTitleField, save_window),
+        foreground='white'
+    )
+    save_button.pack(pady=10)
+
+# Method to save new convo in list
+def saveConvo(conv_field, save_window):
+    title = conv_field.get(1.0, "end-1c")
+    save_conversation(current_conv_id, title)
+    save_window.destroy()
+
+    global conv_list
+    conv_list = retrieve_conversations()
+    updateConvos()
+    window.update()
+
+# Creating new conversation button
 newConvoButton = tk.Button(
     conv_frame,
     text="New Conversation",
+    command=newConvo,
     height=1,
     width=5,
     font=("Courier", 15, "normal"),
@@ -116,18 +193,8 @@ newConvoButton = tk.Button(
     foreground='white'
 )
 
-newConvoButton.grid(row=0,column=0,sticky='nswe',columnspan=1, padx=10, pady=10)
-
-tempButton = tk.Button(
-    conv_frame,
-    text="Temp",
-    command=prevConvo,
-    height=1,
-    width=5,
-    font=("Courier", 15, "normal")
-)
-
-tempButton.grid(row=1,column=0,sticky='nswe',columnspan=1, padx=10, pady=10)
+# Placing new conversation button in the left frame
+newConvoButton.grid(row=0,column=0,sticky='nswe',columnspan=1, padx=5, pady=5)
 
 # Set dimensions of input text field
 inputTextField = Text(main_frame, width=80, height=2, font=("Courier", 15, "bold"), padx=10, pady=10)
@@ -147,7 +214,18 @@ askButton = tk.Button(
 # Placemen of the ask button
 askButton.grid(row=2,column=2, sticky='nswe', columnspan=1, pady=10, padx=5)
 
-# This is the command that enables the window
-# Once this command is run, the window will show
-
+# Method to update the list of conversations
+def updateConvos():
+    id = 0
+    for val in conv_list:
+        newButton = tk.Button(
+            conv_frame,
+            text=val,
+            command=partial(prevConvo, id),
+            font=("Courier", 10, "normal")
+        )
+        newButton.grid(row=id+1,column=0,sticky='nswe',columnspan=1, padx=10, pady=5)
+        id += 1
+    
+updateConvos()
 window.mainloop()
