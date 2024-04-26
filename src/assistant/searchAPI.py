@@ -61,7 +61,7 @@ def default_func(tool_call):
         "tool_call_id": tool_call.id,
         "output": "This function does not exist."
         }
-# End of search_web()
+# End of default_func()
 
 
 # Testing

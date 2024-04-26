@@ -26,6 +26,9 @@ def GPT_answer(query):
     chatbox.insert(END,"GourmetGuide: ", "red")
     chatbox.insert(END,response + "\n\n", "normal")
     chatbox.config(state=DISABLED)
+    
+    # Set the chat box to scroll to bottom on update
+    chatbox.yview(END)
     chatbox.update()
 # End of GPT_answer()
 
@@ -90,6 +93,7 @@ logoLabel.grid(row=0, column=2, sticky='nswe', columnspan=1)
 chatbox = ScrolledText(main_frame,height=20, width=100, font=("Courier", 15, "normal"), padx=10, pady=10, wrap=WORD)
 chatbox.tag_configure("green", font=("Courier", 15, "bold"), foreground="green")
 chatbox.tag_configure("red", font=("Courier", 15, "bold"), foreground="red")
+chatbox.yview(END)
 
 # Disabling the chat box to start with
 chatbox.config(state=DISABLED)
@@ -132,9 +136,13 @@ def prevConvo(conv_id):
             else:
                 chatbox.insert(END,"GourmetGuide: ", "red")
                 chatbox.insert(END,message + "\n\n", "normal")
+            
             chatbox.config(state=DISABLED)
             i -= 1
-    
+
+    # Set the chat box to scroll to bottom on update
+    chatbox.yview(END)
+
     # Allow user to input queries
     inputTextField.config(state=NORMAL)
 # End of prevConvo()
