@@ -124,6 +124,9 @@ def prevConvo(conv_id):
                 chatbox.insert(END,message + "\n\n", "normal")
             chatbox.config(state=DISABLED)
             i -= 1
+    
+    # Allow user to input queries
+    inputTextField.config(state=NORMAL)
 
 # Method to make new conversation
 def newConvo():
@@ -135,6 +138,7 @@ def newConvo():
 
     # Delete the current displayed text on the input text box
     inputTextField.delete(1.0, END)
+    inputTextField.config(state=DISABLED)
 
     # Getting a new conversation id
     global current_conv_id
@@ -172,14 +176,20 @@ def createConvo():
 
 # Method to save new convo in list
 def saveConvo(conv_field, save_window):
+    # Getting the title of the conversation and saving it in the convos_db file
     title = conv_field.get(1.0, "end-1c")
-    save_conversation(current_conv_id, title)
-    save_window.destroy()
+    if title:
+        save_conversation(current_conv_id, title)
+        save_window.destroy()
 
-    global conv_list
-    conv_list = retrieve_conversations()
-    updateConvos()
-    window.update()
+        # Retrieving the list of conversations to update the side buttons
+        global conv_list
+        conv_list = retrieve_conversations()
+        updateConvos()
+        window.update()
+        
+        # Allow user to input queries
+        inputTextField.config(state=NORMAL)
 
 # Creating new conversation button
 newConvoButton = tk.Button(
@@ -202,6 +212,10 @@ inputTextField = Text(main_frame, width=80, height=2, font=("Courier", 15, "bold
 # Placement of the text field
 inputTextField.grid(row=2,column=0, sticky='nswe', columnspan=2, pady=10, padx=5)
 
+# Disable the text field on start up to prevent queries with non-existing conversation ids
+inputTextField.config(state=DISABLED)
+
+# Creating the button for communicating with the AI
 askButton = tk.Button(
     main_frame,
     text="Ask!",
@@ -211,7 +225,7 @@ askButton = tk.Button(
     font=("Courier", 20, "normal")
 )
 
-# Placemen of the ask button
+# Placement of the ask button
 askButton.grid(row=2,column=2, sticky='nswe', columnspan=1, pady=10, padx=5)
 
 # Method to update the list of conversations
