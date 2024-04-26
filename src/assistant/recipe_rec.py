@@ -1,6 +1,7 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 from searchAPI import search_web
+from searchAPI import default_func
 import os
 import time
 import shelve
@@ -109,27 +110,37 @@ def run_assistant(thread):
 
         # Checking if the assistant is trying to call the search_web function
         if run.status == 'requires_action':
-            try:
-                # Retrieve the query prepared by the assistant for the search_web function
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            # Retrieve the query prepared by the assistant for the search_web function
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            print(tool_calls)
+            if tool_calls[0].function.name == 'search_web':
+                try:
+                    # Retrieve the output of the search_web function
+                    tool_outputs = map(search_web, tool_calls)
+                    tool_outputs = list(tool_outputs)
+                    print(tool_calls)
+                    print(tool_outputs)
 
-                # Retrieve the output of the search_web function
-                tool_outputs = map(search_web, tool_calls)
+                    # Submit the output of the search_web function to the assistant
+                    run = client.beta.threads.runs.submit_tool_outputs(
+                        thread_id=thread.id, 
+                        run_id=run.id, 
+                        tool_outputs=tool_outputs)
+                except:
+                    # If the search_web function ran into an error, tell the assistant that the function failed
+                    print("API Search failed")
+            else:
+                # Retrieve the output of the default_func function
+                tool_outputs = map(default_func, tool_calls)
                 tool_outputs = list(tool_outputs)
                 print(tool_calls)
                 print(tool_outputs)
 
-                # Submit the output of the search_web function to the assistant
+                # Submit the output of the default_func function to the assistant
                 run = client.beta.threads.runs.submit_tool_outputs(
                     thread_id=thread.id, 
                     run_id=run.id, 
                     tool_outputs=tool_outputs)
-            except:
-                # If the search_web function ran into an error, tell the assistant that the function failed
-                run = client.beta.threads.runs.submit_tool_outputs(
-                    thread_id=thread.id, 
-                    run_id=run.id, 
-                    tool_outputs=['Failed to get output'])
         # Once the assistant has the necessary url info from search_web(), let the assistant process the information
         else: run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 
@@ -161,4 +172,4 @@ def cancel_run(thread, run):
 # Create assistant (AGAIN ONLY RUN THIS ONCE)
 if __name__ == "__main__":
     # create_assistant()
-    cancel_run('thread_wPueSwJ0zSFfucbXe1cWceBC', 'run_2VGsW6CJJOve9a2MSZVq375O')
+    cancel_run('thread_LWKboaNR3XPUuwK9T3UbaPjU', 'run_HuGHdfwpo9UkjIK02NjWGLKd')

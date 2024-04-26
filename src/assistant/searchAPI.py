@@ -54,6 +54,16 @@ def search_image(query):
 # End of search_image()
 
 
+# Function to search the web using a query
+def default_func(tool_call):
+    # Return a message saying no function was called
+    return {
+        "tool_call_id": tool_call.id,
+        "output": "This function does not exist."
+        }
+# End of search_web()
+
+
 # Testing
 if __name__ == "__main__":
     print(search_image("https://feelgoodfoodie.net/recipe/ground-beef-tacos-napa-cabbage-guacamole/"))
