@@ -251,18 +251,22 @@ askButton.grid(row=2,column=2, sticky='nswe', columnspan=1, pady=10, padx=5)
 # Method to update the list of conversations
 def updateConvos():
     # Iterating over all the saved conv_id and conv_titles
-    id = 0
-    for val in conv_list:
+    id = conv_list.__len__() - 1
+
+    # Getting the row for the button
+    r = 1
+    while id >= 0:
         # Creating a new button for each conv
         newButton = tk.Button(
             conv_frame,
-            text=val,
+            text=conv_list[id],
             command=partial(prevConvo, id),
             font=("Courier", 15, "normal")
         )
         # Setting the new button placement
-        newButton.grid(row=id+1,column=0,sticky='nswe',columnspan=1, padx=10, pady=5)
-        id += 1
+        newButton.grid(row=r,column=0,sticky='nswe',columnspan=1, padx=10, pady=5)
+        id -= 1
+        r += 1
 # End of updateConvos()
 
 
